@@ -1,6 +1,7 @@
 package com.microservices.servicevoiture.web;
 
 import com.microservices.servicevoiture.entities.Voiture;
+import com.microservices.servicevoiture.exceptions.VoitureNotFoundException;
 import com.microservices.servicevoiture.models.Client;
 import com.microservices.servicevoiture.repositories.VoitureRepository;
 import com.microservices.servicevoiture.services.ClientService;
@@ -38,14 +39,17 @@ public class VoitureController {
     public ResponseEntity<Object> findById(@PathVariable Long id) {
         try {
             Voiture voiture = voitureRepository.findById(id)
-                .orElseThrow(() -> new Exception("Voiture Introuvable"));
+                .orElseThrow(() -> new VoitureNotFoundException(id));
 
             voiture.setClient(clientService.clientById(voiture.getClientId()));
 
             return ResponseEntity.ok(voiture);
-        } catch (Exception e) {
+        } catch (VoitureNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Voiture not found with ID: " + id);
+                .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error fetching voiture: " + e.getMessage());
         }
     }
 
@@ -88,7 +92,7 @@ public class VoitureController {
     public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody Voiture updatedVoiture) {
         try {
             Voiture existingVoiture = voitureRepository.findById(id)
-                .orElseThrow(() -> new Exception("Voiture not found with ID: " + id));
+                .orElseThrow(() -> new VoitureNotFoundException(id));
 
             if (updatedVoiture.getMatricule() != null && !updatedVoiture.getMatricule().isEmpty()) {
                 existingVoiture.setMatricule(updatedVoiture.getMatricule());
@@ -103,6 +107,9 @@ public class VoitureController {
             Voiture savedVoiture = voitureRepository.save(existingVoiture);
             return ResponseEntity.ok(savedVoiture);
 
+        } catch (VoitureNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Error updating voiture: " + e.getMessage());

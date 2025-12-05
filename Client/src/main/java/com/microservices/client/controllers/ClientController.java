@@ -1,6 +1,7 @@
 package com.microservices.client.controllers;
 
 import com.microservices.client.entities.Client;
+import com.microservices.client.exceptions.ClientNotFoundException;
 import com.microservices.client.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,8 @@ public class ClientController {
     }
 
     @GetMapping("/clients/{id}")
-    public Client findById(@PathVariable Long id) throws Exception {
+    public Client findById(@PathVariable Long id) {
         return clientRepository.findById(id)
-            .orElseThrow(() -> new Exception("Client non trouvé"));
+            .orElseThrow(() -> new ClientNotFoundException(id));
     }
 }

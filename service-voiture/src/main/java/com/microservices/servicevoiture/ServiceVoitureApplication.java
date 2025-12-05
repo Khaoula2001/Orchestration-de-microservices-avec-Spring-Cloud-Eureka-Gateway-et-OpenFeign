@@ -33,9 +33,9 @@ public class ServiceVoitureApplication {
             System.out.println("Nom est :" + c1.getNom());
             System.out.println("Age est :" + c1.getAge());
             System.out.println("**************************");
-            voitureRepository.save(new Voiture(Long.parseLong("1"), "Toyota", "A 25 333", "Corolla", 1L, c2));
-            voitureRepository.save(new Voiture(Long.parseLong("2"), "Renault", "B 6 3456", "Megane", 1L, c2));
-            voitureRepository.save(new Voiture(Long.parseLong("3"), "Peugeot", "A 55 4444", "301", 2L, c1));
+            voitureRepository.save(new Voiture(1L, "Toyota", "A 25 333", "Corolla", 1L, c2));
+            voitureRepository.save(new Voiture(2L, "Renault", "B 6 3456", "Megane", 1L, c2));
+            voitureRepository.save(new Voiture(3L, "Peugeot", "A 55 4444", "301", 2L, c1));
         };
     }
 }
